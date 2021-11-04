@@ -1,0 +1,30 @@
+h1 {
+  text-align: center;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.notes-form {
+  max-width: 600px;
+  display: flex;
+  margin: auto;
+  flex-direction: column;
+}
+
+.form-panel {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0px;
+}
+
+.form-text {
+  text-align: justify;
+}
+
+.form-controller {
+  display: flex;
+}
