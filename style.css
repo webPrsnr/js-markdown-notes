@@ -1,7 +1,3 @@
-h1 {
-  text-align: center;
-}
-
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -13,18 +9,31 @@ h1 {
   display: flex;
   margin: auto;
   flex-direction: column;
+  box-shadow: #999 1px 1px 3px;
 }
 
 .form-panel {
   display: flex;
   justify-content: space-between;
-  margin: 10px 0px;
+  padding: 10px;
+  background: #eee;
 }
 
 .form-text {
   text-align: justify;
+  padding: 10px 20px;
 }
 
 .form-controller {
   display: flex;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn {
+  padding: 0px 10px;
 }
