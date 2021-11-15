@@ -23,7 +23,7 @@ class Markdown {
     let formPanel = makeHtmlDiv(this.noteForm, "form-panel");
     let formTime = makeHtmlDiv(formPanel, "form-time");
     let formController = makeHtmlDiv(formPanel, "form-controller");
-    let formStatus = makeHtmlDiv(formController, "status");
+    //let formStatus = makeHtmlDiv(formController, "status");
     let formDelete = makeHtmlDiv(formController, "delete");
 
     let noteCheck = false;
@@ -32,11 +32,14 @@ class Markdown {
 
     formText.onfocus = function () {
       changeText(formText);
-    };
 
-    formStatus.addEventListener("click", () => {
-      changeText(formText);
-    });
+      let formStatus = makeHtmlDiv(formController, "status");
+
+      formStatus.addEventListener("click", () => {
+        changeText(formText);
+        formStatus.remove();
+      });
+    };
 
     formDelete.addEventListener("click", () => {
       this.noteForm.remove();
@@ -64,6 +67,10 @@ class Markdown {
       textArea.textContent = noteNode.textContent;
       noteNode.textContent = null;
       noteNode.append(textArea);
+    }
+
+    function renderCheckIcon() {
+      formStatus.after("\f146");
     }
   }
 }
