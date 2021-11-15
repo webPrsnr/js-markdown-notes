@@ -47,9 +47,11 @@ textarea {
 }
 
 .delete::after {
-  content: "delete";
+  font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
+  content: "\f146";
 }
 
 .status::after {
-  content: "status";
+  font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
+  content: "\f14a";
 }
