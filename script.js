@@ -5,7 +5,7 @@ class Markdown {
     this.updateNotes();
   }
   checkText() {
-    return ` Enter something here. Just click
+    return `Enter something here. Just click to edit. \nClick submit icon to save. \nClick delete icon to delete.
     `;
   }
   getCurrentDay() {
@@ -61,6 +61,7 @@ class Markdown {
     function createTextarea(noteNode) {
       const textArea = document.createElement("textarea");
       textArea.name = "noteText";
+      textArea.rows = noteNode.textContent.split("\n").length * 1.5;
       textArea.textContent = noteNode.textContent;
       noteNode.textContent = null;
       noteNode.append(textArea);
