@@ -1,6 +1,5 @@
 class Markdown {
   constructor(text) {
-    this.text = this.checkText();
     this.noteForm;
     this.updateNotes();
   }
@@ -19,7 +18,7 @@ class Markdown {
   renderNoteElement(htmlEl) {
     this.noteForm = makeHtmlDiv(htmlEl, "notes-form");
     let formText = makeHtmlDiv(this.noteForm, "form-text");
-    formText.textContent = this.text;
+    formText.textContent = this.checkText();
     formText.setAttribute("tabindex", "0");
     let formPanel = makeHtmlDiv(this.noteForm, "form-panel");
     let formTime = makeHtmlDiv(formPanel, "form-time");
