@@ -1,0 +1,25 @@
+{
+  "name": "markdown-notes",
+  "version": "0.0.3",
+  "description": "notes generator",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webPrsnr/js-markdown-notes.git"
+  },
+  "keywords": [
+    "js",
+    "vanilla-js",
+    "notes",
+    "markdown"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/webPrsnr/js-markdown-notes/issues"
+  },
+  "homepage": "https://github.com/webPrsnr/js-markdown-notes#readme"
+}

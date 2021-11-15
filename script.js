@@ -1,5 +1,5 @@
 class Markdown {
-  constructor(text) {
+  constructor() {
     this.noteForm;
     this.updateNotes();
   }
@@ -16,61 +16,54 @@ class Markdown {
   }
 
   renderNoteElement(htmlEl) {
-    this.noteForm = makeHtmlDiv(htmlEl, "notes-form");
-    let formText = makeHtmlDiv(this.noteForm, "form-text");
+    this.noteForm = _makeHtmlDiv(htmlEl, "notes-form");
+    const formText = _makeHtmlDiv(this.noteForm, "form-text");
     formText.textContent = this.checkText();
     formText.setAttribute("tabindex", "0");
-    let formPanel = makeHtmlDiv(this.noteForm, "form-panel");
-    let formTime = makeHtmlDiv(formPanel, "form-time");
-    let formController = makeHtmlDiv(formPanel, "form-controller");
-    //let formStatus = makeHtmlDiv(formController, "status");
-    let formDelete = makeHtmlDiv(formController, "delete");
+    const formPanel = _makeHtmlDiv(this.noteForm, "form-panel");
+    const formTime = _makeHtmlDiv(formPanel, "form-time");
+    const formController = _makeHtmlDiv(formPanel, "form-controller");
+    const formStatus = _makeHtmlDiv(formController, "status");
+    const formDelete = _makeHtmlDiv(formController, "delete");
 
     let noteCheck = false;
 
     formTime.textContent = this.getCurrentDay();
 
     formText.onfocus = function () {
-      changeText(formText);
-
-      let formStatus = makeHtmlDiv(formController, "status");
-
-      formStatus.addEventListener("click", () => {
-        changeText(formText);
-        formStatus.remove();
-      });
+      _changeText(formText);
     };
+
+    formStatus.addEventListener("click", () => {
+      _changeText(formText);
+    });
 
     formDelete.addEventListener("click", () => {
       this.noteForm.remove();
     });
-    function changeText(noteNode) {
+    function _changeText(noteNode) {
       if (noteCheck == false) {
         noteCheck = true;
-        createTextarea(noteNode);
+        _createTextarea(noteNode);
       } else if (noteCheck == true) {
         noteCheck = false;
         noteNode.textContent = noteNode.childNodes[0].value;
       }
     }
-    function makeHtmlDiv(htmlEl, className) {
+    function _makeHtmlDiv(htmlEl, className) {
       const div = document.createElement("div");
       div.className = className;
       htmlEl.append(div);
       return div;
     }
 
-    function createTextarea(noteNode) {
+    function _createTextarea(noteNode) {
       const textArea = document.createElement("textarea");
       textArea.name = "noteText";
       textArea.rows = noteNode.textContent.split("\n").length * 1.5;
       textArea.textContent = noteNode.textContent;
       noteNode.textContent = null;
       noteNode.append(textArea);
-    }
-
-    function renderCheckIcon() {
-      formStatus.after("\f146");
     }
   }
 }
