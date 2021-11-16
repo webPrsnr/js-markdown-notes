@@ -26,6 +26,8 @@ class Markdown {
     const formStatus = _makeHtmlDiv(formController, "status");
     const formDelete = _makeHtmlDiv(formController, "delete");
 
+    let id;
+
     let noteCheck = false;
 
     formTime.textContent = this.getCurrentDay();
@@ -40,6 +42,7 @@ class Markdown {
 
     formDelete.addEventListener("click", () => {
       this.noteForm.remove();
+      rmvNoteFromLocalStorage(id);
     });
     function _changeText(noteNode) {
       if (noteCheck == false) {
@@ -48,7 +51,7 @@ class Markdown {
       } else if (noteCheck == true) {
         noteCheck = false;
         noteNode.textContent = noteNode.childNodes[0].value;
-        addNoteToLocalStorage(noteNode.textContent);
+        id = addNoteToLocalStorage(noteNode.textContent);
       }
     }
     function _makeHtmlDiv(htmlEl, className) {
@@ -82,7 +85,7 @@ function getLocalStorageNotes() {
 function setLocalStorageNotes(note) {
   let notes = getLocalStorageNotes();
   notes.push(note);
-  localStorage.setItem(LOCAL_STORAGE_STRING, JSON.stringify(note));
+  localStorage.setItem(LOCAL_STORAGE_STRING, JSON.stringify(notes));
 }
 
 function addNoteToLocalStorage(text) {
@@ -92,6 +95,15 @@ function addNoteToLocalStorage(text) {
     text: text,
   };
   setLocalStorageNotes(newNote);
+  return newNote.id;
+}
+
+function rmvNoteFromLocalStorage(id) {
+  const notes = getLocalStorageNotes();
+  localStorage.clear();
+  notes
+    .filter((note) => note.id !== parseInt(id))
+    .map((el) => setLocalStorageNotes(el));
 }
 
 let notes = getLocalStorageNotes();
