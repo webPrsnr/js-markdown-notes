@@ -48,6 +48,7 @@ class Markdown {
       } else if (noteCheck == true) {
         noteCheck = false;
         noteNode.textContent = noteNode.childNodes[0].value;
+        addNoteToLocalStorage(noteNode.textContent);
       }
     }
     function _makeHtmlDiv(htmlEl, className) {
@@ -67,6 +68,33 @@ class Markdown {
     }
   }
 }
+
+const LOCAL_STORAGE_STRING = "notes";
+
+function getLocalStorageNotes() {
+  const notes =
+    localStorage.getItem(LOCAL_STORAGE_STRING) !== null
+      ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_STRING))
+      : [];
+  return notes;
+}
+
+function setLocalStorageNotes(note) {
+  let notes = getLocalStorageNotes();
+  notes.push(note);
+  localStorage.setItem(LOCAL_STORAGE_STRING, JSON.stringify(note));
+}
+
+function addNoteToLocalStorage(text) {
+  const notes = getLocalStorageNotes();
+  const newNote = {
+    id: notes.length == 0 ? 1 : notes[notes.length - 1].id + 1,
+    text: text,
+  };
+  setLocalStorageNotes(newNote);
+}
+
+let notes = getLocalStorageNotes();
 
 document.querySelector(".btn-add").addEventListener("click", () => {
   new Markdown();
