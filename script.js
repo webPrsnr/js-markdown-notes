@@ -1,9 +1,15 @@
 class Markdown {
-  constructor() {
+  constructor(id, text) {
     this.noteForm;
+    this.noteId = id;
+    this.noteText = text;
     this.updateNotes();
   }
+
   checkText() {
+    if (this.noteText) {
+      return this.noteText;
+    }
     return `Enter something here. Just click to edit. \nClick submit icon to save. \nClick delete icon to delete.
     `;
   }
@@ -26,7 +32,7 @@ class Markdown {
     const formStatus = _makeHtmlDiv(formController, "status");
     const formDelete = _makeHtmlDiv(formController, "delete");
 
-    let id;
+    let id = this.noteId;
 
     let noteCheck = false;
 
@@ -106,8 +112,12 @@ function rmvNoteFromLocalStorage(id) {
     .map((el) => setLocalStorageNotes(el));
 }
 
-let notes = getLocalStorageNotes();
+function preRenderAllNotes() {
+  let notes = getLocalStorageNotes();
+  notes.map((el) => new Markdown(el.id, el.text));
+}
 
+preRenderAllNotes();
 document.querySelector(".btn-add").addEventListener("click", () => {
   new Markdown();
 });
