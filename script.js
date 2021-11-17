@@ -1,8 +1,9 @@
 class Markdown {
-  constructor(id, text) {
+  constructor(id, text, time) {
     this.noteForm;
     this.noteId = id;
     this.noteText = text;
+    this.noteTime = time;
     this.updateNotes();
   }
 
@@ -14,6 +15,9 @@ class Markdown {
     `;
   }
   getCurrentDay() {
+    if (this.noteTime) {
+      return this.noteTime;
+    }
     return new Date().toUTCString();
   }
 
@@ -57,7 +61,7 @@ class Markdown {
       } else if (noteCheck == true) {
         noteCheck = false;
         noteNode.textContent = noteNode.childNodes[0].value;
-        id = addNoteToLocalStorage(noteNode.textContent);
+        id = addNoteToLocalStorage(noteNode.textContent, formTime.textContent);
       }
     }
     function _makeHtmlDiv(htmlEl, className) {
@@ -94,11 +98,12 @@ function setLocalStorageNotes(note) {
   localStorage.setItem(LOCAL_STORAGE_STRING, JSON.stringify(notes));
 }
 
-function addNoteToLocalStorage(text) {
+function addNoteToLocalStorage(text, time) {
   const notes = getLocalStorageNotes();
   const newNote = {
     id: notes.length == 0 ? 1 : notes[notes.length - 1].id + 1,
     text: text,
+    time: time,
   };
   setLocalStorageNotes(newNote);
   return newNote.id;
@@ -114,7 +119,7 @@ function rmvNoteFromLocalStorage(id) {
 
 function preRenderAllNotes() {
   let notes = getLocalStorageNotes();
-  notes.map((el) => new Markdown(el.id, el.text));
+  notes.map((el) => new Markdown(el.id, el.text, el.time));
 }
 
 preRenderAllNotes();
