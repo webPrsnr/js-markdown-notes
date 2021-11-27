@@ -13,8 +13,8 @@ class Markdown {
     if (this.noteText) {
       return this.noteText;
     }
-    return md.render(`# Enter something here. Just click to edit. \nClick submit icon to save. \nClick delete icon to delete.
-    `);
+    return `# Enter something here. Just click to edit. \nClick submit icon to save. \nClick delete icon to delete.
+    `;
   }
   getCurrentDay() {
     if (this.noteTime) {
@@ -30,7 +30,8 @@ class Markdown {
   renderNoteElement(htmlEl) {
     this.noteForm = _makeHtmlDiv(htmlEl, "notes-form");
     const formText = _makeHtmlDiv(this.noteForm, "form-text");
-    formText.textContent = this.checkText();
+    //formText.textContent = this.checkText();
+    formText.innerHTML = md.render(this.checkText());
     formText.setAttribute("tabindex", "0");
     const formPanel = _makeHtmlDiv(this.noteForm, "form-panel");
     const formTime = _makeHtmlDiv(formPanel, "form-time");
@@ -62,7 +63,8 @@ class Markdown {
         _createTextarea(noteNode);
       } else if (noteCheck == true) {
         noteCheck = false;
-        noteNode.textContent = noteNode.childNodes[0].value;
+        //noteNode.textContent = null;
+        noteNode.innerHTML = md.render(noteNode.childNodes[0].value);
         id = addNoteToLocalStorage(noteNode.textContent, formTime.textContent);
       }
     }
@@ -79,6 +81,7 @@ class Markdown {
       textArea.rows = noteNode.textContent.split("\n").length * 1.5;
       textArea.textContent = noteNode.textContent;
       noteNode.textContent = null;
+
       noteNode.append(textArea);
     }
   }
