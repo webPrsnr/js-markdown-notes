@@ -57,17 +57,23 @@ class Markdown {
       this.noteForm.remove();
       rmvNoteFromLocalStorage(id);
     });
+
     function _changeText(noteNode) {
       if (noteCheck == false) {
         noteCheck = true;
         _createTextarea(noteNode);
-      } else if (noteCheck == true) {
+      } else {
         noteCheck = false;
-        //noteNode.textContent = null;
+        //console.log(this.noteId, this.noteTime);
         noteNode.innerHTML = md.render(noteNode.childNodes[0].value);
-        id = addNoteToLocalStorage(noteNode.textContent, formTime.textContent);
+        id = addNoteToLocalStorage(
+          noteNode.textContent,
+          formTime.textContent,
+          id
+        );
       }
     }
+
     function _makeHtmlDiv(htmlEl, className) {
       const div = document.createElement("div");
       div.className = className;
@@ -103,10 +109,13 @@ function setLocalStorageNotes(note) {
   localStorage.setItem(LOCAL_STORAGE_STRING, JSON.stringify(notes));
 }
 
-function addNoteToLocalStorage(text, time) {
+function addNoteToLocalStorage(text, time, id) {
   const notes = getLocalStorageNotes();
+  if (id) {
+    rmvNoteFromLocalStorage(id);
+  }
   const newNote = {
-    id: notes.length == 0 ? 1 : notes[notes.length - 1].id + 1,
+    id: id ? id : notes.length == 0 ? 1 : notes[notes.length - 1].id + 1,
     text: text,
     time: time,
   };
