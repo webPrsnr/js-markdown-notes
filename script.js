@@ -13,7 +13,7 @@ class Markdown {
     if (this.noteText) {
       return this.noteText;
     }
-    return `# Enter something here. Just click to edit. \nClick submit icon to save. \nClick delete icon to delete.
+    return `# Enter something here. Just click to edit. \n## Click submit icon to save. \n## Click delete icon to delete.
     `;
   }
   getCurrentDay() {
@@ -30,7 +30,6 @@ class Markdown {
   renderNoteElement(htmlEl) {
     this.noteForm = _makeHtmlDiv(htmlEl, "notes-form");
     const formText = _makeHtmlDiv(this.noteForm, "form-text");
-    //formText.textContent = this.checkText();
     formText.innerHTML = md.render(this.checkText());
     formText.setAttribute("tabindex", "0");
     const formPanel = _makeHtmlDiv(this.noteForm, "form-panel");
@@ -40,6 +39,7 @@ class Markdown {
     const formDelete = _makeHtmlDiv(formController, "delete");
 
     let id = this.noteId;
+    let markdownText = this.checkText();
 
     let noteCheck = false;
 
@@ -64,13 +64,13 @@ class Markdown {
         _createTextarea(noteNode);
       } else {
         noteCheck = false;
-        //console.log(this.noteId, this.noteTime);
-        noteNode.innerHTML = md.render(noteNode.childNodes[0].value);
+        markdownText = noteNode.childNodes[0].value;
         id = addNoteToLocalStorage(
-          noteNode.textContent,
+          noteNode.childNodes[0].value,
           formTime.textContent,
           id
         );
+        noteNode.innerHTML = md.render(noteNode.childNodes[0].value);
       }
     }
 
@@ -85,7 +85,7 @@ class Markdown {
       const textArea = document.createElement("textarea");
       textArea.name = "noteText";
       textArea.rows = noteNode.textContent.split("\n").length * 1.5;
-      textArea.textContent = noteNode.textContent;
+      textArea.textContent = markdownText;
       noteNode.textContent = null;
 
       noteNode.append(textArea);
