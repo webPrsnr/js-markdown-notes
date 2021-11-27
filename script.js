@@ -1,3 +1,5 @@
+const md = window.markdownit();
+
 class Markdown {
   constructor(id, text, time) {
     this.noteForm;
@@ -11,8 +13,8 @@ class Markdown {
     if (this.noteText) {
       return this.noteText;
     }
-    return `Enter something here. Just click to edit. \nClick submit icon to save. \nClick delete icon to delete.
-    `;
+    return md.render(`# Enter something here. Just click to edit. \nClick submit icon to save. \nClick delete icon to delete.
+    `);
   }
   getCurrentDay() {
     if (this.noteTime) {
