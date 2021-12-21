@@ -131,12 +131,11 @@ function rmvNoteFromLocalStorage(id) {
     .map((el) => setLocalStorageNotes(el));
 }
 
-function preRenderAllNotes() {
+(function preRenderAllNotes() {
   let notes = getLocalStorageNotes();
   notes.map((el) => new Markdown(el.id, el.text, el.time));
-}
+})();
 
-preRenderAllNotes();
 document.querySelector(".btn-add").addEventListener("click", () => {
   new Markdown();
 });
