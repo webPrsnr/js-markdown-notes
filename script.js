@@ -127,10 +127,7 @@ class MarkdownDB {
   }
 
   rmvNoteFromLocalStorageNotes(id) {
-    //localStorage.clear();
-    this.notes.forEach((el, index) =>
-      el.id === id ? this.notes.splice(index, 1) : el
-    );
+    this.notes = this.notes.filter((note) => note.id !== id);
     localStorage.setItem("notes", JSON.stringify(this.notes));
   }
 }
