@@ -1,11 +1,14 @@
 const md = window.markdownit();
 
 class Markdown {
-  constructor(id, text, time) {
+  constructor(markdownDB, markdownRender, id, text, time) {
+    this.markdownRender = markdownRender;
+    this.markdownDB = markdownDB;
     this.noteForm;
     this.noteId = id;
     this.noteText = text;
     this.noteTime = time;
+    this.noteAddBtn = document.querySelector(".btn-add");
     this.updateNotes();
   }
 
@@ -24,118 +27,133 @@ class Markdown {
   }
 
   updateNotes() {
-    this.renderNoteElement(document.querySelector(".wrapper"));
-  }
+    this.markdownRender.markdownText = this.checkText();
+    this.markdownRender.formText.innerHTML = md.render(this.checkText());
 
-  renderNoteElement(htmlEl) {
-    this.noteForm = _makeHtmlDiv(htmlEl, "notes-form");
-    const formText = _makeHtmlDiv(this.noteForm, "form-text");
-    formText.innerHTML = md.render(this.checkText());
-    formText.setAttribute("tabindex", "0");
-    const formPanel = _makeHtmlDiv(this.noteForm, "form-panel");
-    const formTime = _makeHtmlDiv(formPanel, "form-time");
-    const formController = _makeHtmlDiv(formPanel, "form-controller");
-    const formStatus = _makeHtmlDiv(formController, "status");
-    const formDelete = _makeHtmlDiv(formController, "delete");
+    this.markdownRender.formTime.textContent = this.getCurrentDay();
 
-    let id = this.noteId;
-    let markdownText = this.checkText();
-
-    let noteCheck = false;
-
-    formTime.textContent = this.getCurrentDay();
-
-    formText.onfocus = function () {
-      _changeText(formText);
+    this.markdownRender.formText.onfocus = () => {
+      this.markdownRender.changeText(this.markdownRender.formText);
     };
 
-    formStatus.addEventListener("click", () => {
-      _changeText(formText);
+    this.markdownRender.formStatus.addEventListener("click", () => {
+      let noteNode = this.markdownRender.changeText(
+        this.markdownRender.formText
+      );
+      this.noteId = this.markdownDB.addNoteToLocalStorage(
+        this.markdownRender.markdownText,
+        this.markdownRender.formTime.textContent,
+        this.noteId
+      );
     });
 
-    formDelete.addEventListener("click", () => {
-      this.noteForm.remove();
-      rmvNoteFromLocalStorage(id);
+    this.markdownRender.formDelete.addEventListener("click", () => {
+      this.markdownRender.noteForm.remove();
+      this.markdownDB.rmvNoteFromLocalStorageNotes(this.noteId);
     });
-
-    function _changeText(noteNode) {
-      if (noteCheck == false) {
-        noteCheck = true;
-        _createTextarea(noteNode);
-      } else {
-        noteCheck = false;
-        markdownText = noteNode.childNodes[0].value;
-        id = addNoteToLocalStorage(
-          noteNode.childNodes[0].value,
-          formTime.textContent,
-          id
-        );
-        noteNode.innerHTML = md.render(noteNode.childNodes[0].value);
-      }
-    }
-
-    function _makeHtmlDiv(htmlEl, className) {
-      const div = document.createElement("div");
-      div.className = className;
-      htmlEl.append(div);
-      return div;
-    }
-
-    function _createTextarea(noteNode) {
-      const textArea = document.createElement("textarea");
-      textArea.name = "noteText";
-      textArea.rows = noteNode.textContent.split("\n").length * 1.5;
-      textArea.textContent = markdownText;
-      noteNode.textContent = null;
-
-      noteNode.append(textArea);
-    }
   }
 }
 
-const LOCAL_STORAGE_STRING = "notes";
-
-function getLocalStorageNotes() {
-  const notes =
-    localStorage.getItem(LOCAL_STORAGE_STRING) !== null
-      ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_STRING))
-      : [];
-  return notes;
-}
-
-function setLocalStorageNotes(note) {
-  let notes = getLocalStorageNotes();
-  notes.push(note);
-  localStorage.setItem(LOCAL_STORAGE_STRING, JSON.stringify(notes));
-}
-
-function addNoteToLocalStorage(text, time, id) {
-  const notes = getLocalStorageNotes();
-  if (id) {
-    rmvNoteFromLocalStorage(id);
+class MarkdownRender {
+  constructor(htmlEl) {
+    this.noteForm = this.makeHtmlDiv(htmlEl, "notes-form");
+    this.formText = this.makeHtmlDiv(this.noteForm, "form-text");
+    this.formText.innerHTML = `# Enter something here. Just click to edit. \n## Click submit icon to save. \n## Click delete icon to delete.
+    `;
+    this.formText.setAttribute("tabindex", "0");
+    this.formPanel = this.makeHtmlDiv(this.noteForm, "form-panel");
+    this.formTime = this.makeHtmlDiv(this.formPanel, "form-time");
+    this.formController = this.makeHtmlDiv(this.formPanel, "form-controller");
+    this.formStatus = this.makeHtmlDiv(this.formController, "status");
+    this.formDelete = this.makeHtmlDiv(this.formController, "delete");
+    this.noteCheck = false;
+    this.markdownText;
   }
-  const newNote = {
-    id: id ? id : notes.length == 0 ? 1 : notes[notes.length - 1].id + 1,
-    text: text,
-    time: time,
-  };
-  setLocalStorageNotes(newNote);
-  return newNote.id;
+  makeHtmlDiv(htmlEl, className) {
+    const div = document.createElement("div");
+    div.className = className;
+    htmlEl.append(div);
+    return div;
+  }
+
+  createTextarea(noteNode) {
+    const textArea = document.createElement("textarea");
+    textArea.name = "noteText";
+    textArea.rows = noteNode.textContent.split("\n").length * 1.5;
+    textArea.textContent = this.markdownText;
+    noteNode.textContent = null;
+
+    noteNode.append(textArea);
+  }
+
+  changeText(noteNode) {
+    if (this.noteCheck == false) {
+      this.noteCheck = true;
+      this.createTextarea(noteNode);
+    } else {
+      this.noteCheck = false;
+      this.markdownText = noteNode.childNodes[0].value;
+      noteNode.innerHTML = md.render(noteNode.childNodes[0].value);
+    }
+    return noteNode;
+  }
 }
 
-function rmvNoteFromLocalStorage(id) {
-  const notes = getLocalStorageNotes();
-  localStorage.clear();
-  notes
-    .filter((note) => note.id !== parseInt(id))
-    .map((el) => setLocalStorageNotes(el));
+class MarkdownDB {
+  constructor() {
+    this.notes = JSON.parse(localStorage.getItem("notes")) || [];
+  }
+
+  setLocalStorageNotes(note) {
+    this.notes.push(note);
+    localStorage.setItem("notes", JSON.stringify(this.notes));
+  }
+
+  addNoteToLocalStorage(text, time, id) {
+    if (id) {
+      this.rmvNoteFromLocalStorageNotes(id);
+    }
+    const note = {
+      id: id
+        ? id
+        : this.notes.length == 0
+        ? 1
+        : this.notes[this.notes.length - 1].id + 1,
+      text: text,
+      time: time,
+    };
+    this.setLocalStorageNotes(note);
+    return note.id;
+  }
+
+  rmvNoteFromLocalStorageNotes(id) {
+    //localStorage.clear();
+    this.notes.forEach((el, index) =>
+      el.id === id ? this.notes.splice(index, 1) : el
+    );
+    localStorage.setItem("notes", JSON.stringify(this.notes));
+  }
 }
 
-(function preRenderAllNotes() {
-  let notes = getLocalStorageNotes();
-  notes.map((el) => new Markdown(el.id, el.text, el.time));
+(function preRender() {
+  notes = JSON.parse(localStorage.getItem("notes"));
+  if (notes) {
+    notes.map((note) => {
+      new Markdown(
+        new MarkdownDB(),
+        new MarkdownRender(document.querySelector(".wrapper")),
+        note.id,
+        note.text,
+        note.time
+      );
+    });
+  }
 })();
 
 document.querySelector(".btn-add").addEventListener("click", () => {
-  new Markdown();
+  //debugger;
+  new Markdown(
+    new MarkdownDB(),
+    new MarkdownRender(document.querySelector(".wrapper"))
+  );
 });
